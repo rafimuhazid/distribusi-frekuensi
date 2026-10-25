@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistika Nilai Mahasiswa</title>
+    <link rel="stylesheet" href="./dist/css/output.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="mx-auto max-w-6xl px-4 py-10">
+
+        <header class="mb-10 text-center">
+            <p class="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-blue-400">Web Menghitung Statistik</p>
+            <h1 class="text-3xl font-bold md:text-5xl">Statistika Nilai</h1>
+            <p class="mt-4 text-slate-400">Rafii Muhazzid Nurrisky</p>
+        </header>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-xl">
+            <h2 class="mb-5 text-xl font-bold">Input Data Mahasiswa</h2>
+
+            <form id="formMahasiswa" class="mb-6 grid gap-4 md:grid-cols-3">
+                <div>
+                    <label for="inputNpm" class="mb-2 block text-sm text-slate-300">NPM Mahasiswa</label>
+                    <input id="inputNpm" type="text" inputmode="numeric" placeholder="Contoh: 253040001"
+                        class="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="inputNilai" class="mb-2 block text-sm text-slate-300">Nilai (0–100)</label>
+                    <input id="inputNilai" type="number" min="0" max="100" step="any" placeholder="Contoh: 85"
+                        class="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500" required>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full rounded-lg bg-blue-600 px-5 py-3 font-semibold transition hover:bg-blue-500">
+                        + Tambah Data
+                    </button>
+                </div>
+            </form>
+
+            <div class="flex flex-wrap gap-3">
+                <button id="tombolContoh" type="button" class="rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium hover:bg-slate-600">Gunakan Data Contoh</button>
+                <button id="tombolReset" type="button" class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium hover:bg-red-500">Reset Data</button>
+            </div>
+
+            <p id="pesan" class="mt-4 text-sm text-amber-400"></p>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <h2 class="text-xl font-bold">Data Nilai Mahasiswa</h2>
+                <span id="totalMahasiswa" class="rounded-full bg-blue-500/20 px-4 py-2 text-sm text-blue-300">0 mahasiswa</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[500px] text-left text-sm">
+                    <thead class="border-b border-slate-700 text-slate-400">
+                        <tr>
+                            <th class="px-4 py-3">No.</th>
+                            <th class="px-4 py-3">NPM</th>
+                            <th class="px-4 py-3">Nilai</th>
+                            <th class="px-4 py-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelMahasiswa">
+                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">Belum ada data mahasiswa.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="mb-5 text-xl font-bold">Ukuran Pemusatan Data</h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                    <p class="text-sm text-slate-400">Mean (Rata-rata)</p>
+                    <p id="rataRata" class="mt-3 text-3xl font-bold text-blue-400">-</p>
+                </div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                    <p class="text-sm text-slate-400">Median</p>
+                    <p id="median" class="mt-3 text-3xl font-bold text-purple-400">-</p>
+                </div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                    <p class="text-sm text-slate-400">Modus</p>
+                    <p id="modus" class="mt-3 break-words text-2xl font-bold text-emerald-400">-</p>
+                </div>
+                <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+                    <p class="text-sm text-slate-400">Jumlah Data</p>
+                    <p id="jumlahData" class="mt-3 text-3xl font-bold text-amber-400">0</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">Ukuran Penyebaran dan Bentuk Data</h2>
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-xl bg-slate-800 p-5">
+                    <p class="text-sm text-slate-400">Varians Sampel (s²)</p>
+                    <p id="varians" class="mt-3 text-2xl font-bold">-</p>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5">
+                    <p class="text-sm text-slate-400">Standar Deviasi</p>
+                    <p id="standarDeviasi" class="mt-3 text-2xl font-bold">-</p>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5">
+                    <p class="text-sm text-slate-400">Skewness</p>
+                    <p id="kemencengan" class="mt-3 text-2xl font-bold">-</p>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5">
+                    <p class="text-sm text-slate-400">Kurtosis (Excess)</p>
+                    <p id="keruncingan" class="mt-3 text-2xl font-bold">-</p>
+                </div>
+            </div>
+            <p class="mt-4 text-xs leading-6 text-slate-500">
+                Varians dan standar deviasi dihitung sebagai sampel (dibagi n − 1). Skewness dan kurtosis memakai
+                standar deviasi populasi, dan kurtosis yang ditampilkan adalah excess kurtosis. Skewness dan kurtosis
+                tidak ditampilkan jika jumlah data atau variasi data tidak mencukupi.
+            </p>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">Ukuran Letak Data</h2>
+
+            <div class="mb-6">
+                <h3 class="mb-3 font-semibold text-blue-300">Kuartil</h3>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div class="rounded-lg bg-slate-800 p-4">
+                        <p class="text-sm text-slate-400">Q1 (Kuartil 1)</p>
+                        <p id="kuartil1" class="mt-2 text-2xl font-bold">-</p>
+                    </div>
+                    <div class="rounded-lg bg-slate-800 p-4">
+                        <p class="text-sm text-slate-400">Q2 (Kuartil 2)</p>
+                        <p id="kuartil2" class="mt-2 text-2xl font-bold">-</p>
+                    </div>
+                    <div class="rounded-lg bg-slate-800 p-4">
+                        <p class="text-sm text-slate-400">Q3 (Kuartil 3)</p>
+                        <p id="kuartil3" class="mt-2 text-2xl font-bold">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="mb-3 font-semibold text-purple-300">Desil</h3>
+                <div id="desil" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"></div>
+            </div>
+
+            <div>
+                <h3 class="mb-3 font-semibold text-emerald-300">Persentil</h3>
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="inputPersentil" class="mb-2 block text-sm text-slate-400">Pilih persentil (1–99)</label>
+                        <input id="inputPersentil" type="number" min="1" max="99" value="90"
+                            class="w-36 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-emerald-500">
+                    </div>
+                    <button id="tombolHitungPersentil" type="button" class="rounded-lg bg-emerald-600 px-5 py-3 font-semibold hover:bg-emerald-500">
+                        Hitung Persentil
+                    </button>
+                </div>
+                <p id="hasilPersentil" class="mt-4 text-lg font-semibold">P90: -</p>
+            </div>
+        </section>
+
+        <!-- Distribusi Frekuensi -->
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">1. Tabel Distribusi Frekuensi</h2>
+
+            <div class="mb-6 flex flex-wrap items-end gap-4">
+                <div>
+                    <label for="jumlahKelas" class="mb-2 block text-sm text-slate-400">Banyak kelas (k)</label>
+                    <input id="jumlahKelas" type="number" min="1" max="30" value="6"
+                        class="w-36 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500">
+                </div>
+                <p id="saranSturges" class="pb-3 text-sm text-slate-500"></p>
+            </div>
+
+            <div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                <div class="rounded-lg bg-slate-800 p-4"><p class="text-sm text-slate-400">n</p><p id="distN" class="mt-2 text-xl font-bold">-</p></div>
+                <div class="rounded-lg bg-slate-800 p-4"><p class="text-sm text-slate-400">Min</p><p id="distMin" class="mt-2 text-xl font-bold">-</p></div>
+                <div class="rounded-lg bg-slate-800 p-4"><p class="text-sm text-slate-400">Max</p><p id="distMaks" class="mt-2 text-xl font-bold">-</p></div>
+                <div class="rounded-lg bg-slate-800 p-4"><p class="text-sm text-slate-400">Range</p><p id="distRentang" class="mt-2 text-xl font-bold">-</p></div>
+                <div class="rounded-lg bg-slate-800 p-4"><p class="text-sm text-slate-400">W = Range / k</p><p id="distLebarMentah" class="mt-2 text-xl font-bold">-</p></div>
+                <div class="rounded-lg bg-blue-500/20 p-4"><p class="text-sm text-blue-300">W (dibulatkan ke atas)</p><p id="distLebar" class="mt-2 text-xl font-bold text-blue-200">-</p></div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[800px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300">
+                        <tr>
+                            <th class="px-3 py-3">Kelas</th>
+                            <th class="px-3 py-3">LCL</th>
+                            <th class="px-3 py-3">UCL</th>
+                            <th class="px-3 py-3">LCB</th>
+                            <th class="px-3 py-3">UCB</th>
+                            <th class="px-3 py-3">F</th>
+                            <th class="px-3 py-3">Fkum</th>
+                            <th class="px-3 py-3">f relatif</th>
+                            <th class="px-3 py-3">Fkum relatif</th>
+                            <th class="px-3 py-3">Kurang dari</th>
+                            <th class="px-3 py-3">Lebih dari</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelDistribusi"></tbody>
+                    <tfoot class="border-t border-slate-700 font-semibold">
+                        <tr>
+                            <td colspan="5" class="px-3 py-3 text-right text-slate-400">Jumlah</td>
+                            <td id="totalFDistribusi" class="px-3 py-3">-</td>
+                            <td></td>
+                            <td id="totalFRelDistribusi" class="px-3 py-3">-</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <p class="mt-4 text-xs leading-6 text-slate-500">
+                LCL/UCL = batas kelas bawah/atas, LCB/UCB = tepi kelas bawah/atas, F = frekuensi.
+                Kurang dari = Fkum (≤ UCB); Lebih dari = banyak data ≥ LCB.
+            </p>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">2. Mean (Rata-rata Data Berkelompok)</h2>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="overflow-x-auto lg:col-span-2">
+                    <table class="w-full min-w-[560px] text-center text-sm">
+                        <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">CM</th><th class="px-3 py-3">F × CM</th></tr></thead>
+                        <tbody id="tabelMean"></tbody>
+                        <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFMean" class="px-3 py-3">-</td><td colspan="1"></td><td id="totalFCMMean" class="px-3 py-3">-</td></tr></tfoot>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5 text-sm">
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F × CM</span>
+                        <span id="sigmaFCM" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F</span>
+                        <span id="sigmaF" class="font-semibold">-</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">MEAN</span>
+                        <span id="hasilMean" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Mean = Σ(F × CM) / ΣF, dengan CM = (LCL + UCL) / 2.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">3. Median (Data Berkelompok)</h2>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="overflow-x-auto lg:col-span-2">
+                    <table class="w-full min-w-[560px] text-center text-sm">
+                        <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">Fkum</th></tr></thead>
+                        <tbody id="tabelMedian"></tbody>
+                        <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFMedian" class="px-3 py-3">-</td><td colspan="1"></td></tr></tfoot>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5 text-sm">
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">n</span>
+                        <span id="medianN" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">n / 2</span>
+                        <span id="medianNPer2" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">LCB kelas median</span>
+                        <span id="medianLCB" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Fkum sebelum kelas median</span>
+                        <span id="medianFkumSebelum" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f kelas median</span>
+                        <span id="medianF" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">w (lebar kelas)</span>
+                        <span id="medianW" class="font-semibold">-</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">MEDIAN</span>
+                        <span id="hasilMedian" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Median = LCB + ((n/2 − Fkum) / f) × w. Kelas median = kelas pertama dengan Fkum ≥ n/2 (ditandai kuning).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">4. Modus (Data Berkelompok)</h2>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="overflow-x-auto lg:col-span-2">
+                    <table class="w-full min-w-[560px] text-center text-sm">
+                        <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">Fkum</th></tr></thead>
+                        <tbody id="tabelModus"></tbody>
+                        <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFModus" class="px-3 py-3">-</td><td colspan="1"></td></tr></tfoot>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5 text-sm">
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">LCB kelas modus</span>
+                        <span id="modusLCB" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f1 (frekuensi kelas modus)</span>
+                        <span id="modusF1" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f0 (frekuensi kelas sebelum)</span>
+                        <span id="modusF0" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f2 (frekuensi kelas sesudah)</span>
+                        <span id="modusF2" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">w (lebar kelas)</span>
+                        <span id="modusW" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f1 − f0</span>
+                        <span id="modusF1MinF0" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">f1 − f2</span>
+                        <span id="modusF1MinF2" class="font-semibold">-</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">MODUS</span>
+                        <span id="hasilModus" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Modus = LCB + ((f1−f0) / ((f1−f0)+(f1−f2))) × w. Kelas modus = kelas dengan frekuensi terbesar (ditandai kuning).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">5. Varians &amp; Standar Deviasi (Data Berkelompok)</h2>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="overflow-x-auto lg:col-span-2">
+                    <table class="w-full min-w-[560px] text-center text-sm">
+                        <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">CM</th><th class="px-3 py-3">F × CM</th><th class="px-3 py-3">F × (CM − Mean)²</th></tr></thead>
+                        <tbody id="tabelVarians"></tbody>
+                        <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFVarians" class="px-3 py-3">-</td><td colspan="1"></td><td id="totalFCMVarians" class="px-3 py-3">-</td><td id="totalFDVarians" class="px-3 py-3">-</td></tr></tfoot>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5 text-sm">
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">MEAN</span>
+                        <span id="variansMean" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F</span>
+                        <span id="variansSigmaF" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F × (CM − Mean)²</span>
+                        <span id="variansSigmaFD" class="font-semibold">-</span>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">Varians</span>
+                        <span id="hasilVarians" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between rounded-lg bg-emerald-500/20 px-3 py-3">
+                        <span class="font-bold text-emerald-200">Standar Deviasi</span>
+                        <span id="hasilSD" class="text-lg font-bold text-emerald-200">-</span>
+                    </div>
+                    <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Varians = Σ F × (CM − Mean)² / ΣF; Standar Deviasi = √Varians.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">6. Kemencengan (Skewness) &amp; Keruncingan (Kurtosis) Data Berkelompok</h2>
+            <div class="grid gap-6 lg:grid-cols-3">
+                <div class="overflow-x-auto lg:col-span-2">
+                    <table class="w-full min-w-[820px] text-center text-sm">
+                        <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">CM</th><th class="px-3 py-3">F × (CM − Mean)²</th><th class="px-3 py-3">F × (CM − Mean)³</th><th class="px-3 py-3">F × (CM − Mean)⁴</th></tr></thead>
+                        <tbody id="tabelBentuk"></tbody>
+                        <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFBentuk" class="px-3 py-3">-</td><td></td><td id="totalFD2Bentuk" class="px-3 py-3">-</td><td id="totalFD3Bentuk" class="px-3 py-3">-</td><td id="totalFD4Bentuk" class="px-3 py-3">-</td></tr></tfoot>
+                    </table>
+                </div>
+                <div class="rounded-xl bg-slate-800 p-5 text-sm">
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">MEAN</span>
+                        <span id="bentukMean" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F</span>
+                        <span id="bentukSigmaF" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F × (CM − Mean)²</span>
+                        <span id="bentukSigmaFD2" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F × (CM − Mean)³</span>
+                        <span id="bentukSigmaFD3" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">Σ F × (CM − Mean)⁴</span>
+                        <span id="bentukSigmaFD4" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">m2 = Σ F(CM − Mean)² / ΣF</span>
+                        <span id="bentukM2" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">s = √m2</span>
+                        <span id="bentukSD" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">m3 = Σ F(CM − Mean)³ / ΣF</span>
+                        <span id="bentukM3" class="font-semibold">-</span>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-700 py-2">
+                        <span class="text-slate-400">m4 = Σ F(CM − Mean)⁴ / ΣF</span>
+                        <span id="bentukM4" class="font-semibold">-</span>
+                    </div>
+                    
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">Skewness (α3)</span>
+                        <span id="hasilKemencengan" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-blue-500/20 px-3 py-3">
+                        <span class="font-bold text-blue-200">Kurtosis (α4)</span>
+                        <span id="hasilKeruncingan" class="text-lg font-bold text-blue-200">-</span>
+                    </div>
+                    
+                    <div class="mt-3 flex items-center justify-between rounded-lg bg-emerald-500/20 px-3 py-3">
+                        <span class="font-bold text-emerald-200">Excess Kurtosis (α4 − 3)</span>
+                        <span id="hasilKelebihanKeruncingan" class="text-lg font-bold text-emerald-200">-</span>
+                    </div>
+                    <p id="bentukInterpretasi" class="mt-4 text-sm text-slate-300"></p>
+                    <p class="mt-3 text-xs leading-6 text-slate-500">Rumus: α3 = m3 / s³ dan α4 = m4 / s⁴, dengan mr = Σ F × (CM − Mean)ʳ / ΣF. Distribusi normal memiliki α3 = 0 dan α4 = 3.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">7. Kuartil (Data Berkelompok)</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[560px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">Fkum</th></tr></thead>
+                    <tbody id="tabelKelasKuartil"></tbody>
+                    <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFKuartil" class="px-3 py-3">-</td><td></td></tr></tfoot>
+                </table>
+            </div>
+            <h3 class="mb-3 mt-6 font-semibold text-blue-300">Hasil Perhitungan</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[720px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Ukuran</th><th class="px-3 py-3">Posisi (i × n / 4)</th><th class="px-3 py-3">Kelas ke-</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">Fkum sebelum</th><th class="px-3 py-3">f</th><th class="px-3 py-3">w</th><th class="px-3 py-3">Nilai</th></tr></thead>
+                    <tbody id="tabelHasilKuartil"></tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Qi = LCB + ((i × n / 4 − Fkum) / f) × w. Kelas yang dipakai (ditandai kuning) adalah kelas pertama dengan Fkum ≥ i × n / 4.</p>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">8. Desil (Data Berkelompok)</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[560px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">Fkum</th></tr></thead>
+                    <tbody id="tabelKelasDesil"></tbody>
+                    <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFDesil" class="px-3 py-3">-</td><td></td></tr></tfoot>
+                </table>
+            </div>
+            <h3 class="mb-3 mt-6 font-semibold text-blue-300">Hasil Perhitungan</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[720px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Ukuran</th><th class="px-3 py-3">Posisi (i × n / 10)</th><th class="px-3 py-3">Kelas ke-</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">Fkum sebelum</th><th class="px-3 py-3">f</th><th class="px-3 py-3">w</th><th class="px-3 py-3">Nilai</th></tr></thead>
+                    <tbody id="tabelHasilDesil"></tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Di = LCB + ((i × n / 10 − Fkum) / f) × w. Kelas yang dipakai (ditandai kuning) adalah kelas pertama dengan Fkum ≥ i × n / 10.</p>
+        </section>
+
+        <section class="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-6">
+            <h2 class="mb-5 text-xl font-bold">9. Persentil (Data Berkelompok)</h2>
+            <div class="mb-6 flex flex-wrap items-end gap-3">
+                <div>
+                    <label for="inputPersentilBerkelompok" class="mb-2 block text-sm text-slate-400">Pilih persentil (1–99)</label>
+                    <input id="inputPersentilBerkelompok" type="number" min="1" max="99" value="90"
+                        class="w-36 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-emerald-500">
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[560px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Kelas</th><th class="px-3 py-3">LCL</th><th class="px-3 py-3">UCL</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">UCB</th><th class="px-3 py-3">F</th><th class="px-3 py-3">Fkum</th></tr></thead>
+                    <tbody id="tabelKelasPersentil"></tbody>
+                    <tfoot class="border-t border-slate-700 font-semibold"><tr><td colspan="5"></td><td id="totalFPersentil" class="px-3 py-3">-</td><td></td></tr></tfoot>
+                </table>
+            </div>
+            <h3 class="mb-3 mt-6 font-semibold text-blue-300">Hasil Perhitungan</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[720px] text-center text-sm">
+                    <thead class="bg-slate-800 text-slate-300"><tr><th class="px-3 py-3">Ukuran</th><th class="px-3 py-3">Posisi (i × n / 100)</th><th class="px-3 py-3">Kelas ke-</th><th class="px-3 py-3">LCB</th><th class="px-3 py-3">Fkum sebelum</th><th class="px-3 py-3">f</th><th class="px-3 py-3">w</th><th class="px-3 py-3">Nilai</th></tr></thead>
+                    <tbody id="tabelHasilPersentil"></tbody>
+                </table>
+            </div>
+            <p class="mt-4 text-xs leading-6 text-slate-500">Rumus: Pi = LCB + ((i × n / 100 − Fkum) / f) × w. Kelas yang dipakai (ditandai kuning) adalah kelas pertama dengan Fkum ≥ i × n / 100.</p>
+        </section>
+
+        <footer class="py-4 text-center text-sm text-slate-500">Rafii Muhazzid N - 2026</footer>
+    </div>
+
+<script src="./src/js/script.js"></script>
+</body>
+</html>
