@@ -1,5 +1,4 @@
-
-// Statistika Nilai 
+// Statistika Nilai
 
 let daftarMahasiswa = [];
 let idBerikutnya = 1;
@@ -101,7 +100,7 @@ function hitungJumlahKuadrat(data, rataRata) {
 }
 
 function hitungVariansSampel(data, rataRata) {
-    // varians sampel: Σ(X − X̄)² / (n − 1), sesuai Excel
+    // varians sampel: Σ(X − X̄)² / (n − 1)
     if (data.length < 2) return null;
     return hitungJumlahKuadrat(data, rataRata) / (data.length - 1);
 }
@@ -289,9 +288,13 @@ function tampilkanDistribusi() {
     const n = terurut.length;
     const badan = ambil("tabelDistribusi");
 
+    // Jumlah kelas: otomatis (rumus Sturges) atau manual
+    const sturges = n > 0 ? Math.min(30, Math.max(1, Math.round(1 + 3.322 * Math.log10(n)))) : null;
+    const modeOtomatis = document.querySelector('input[name="modeKelas"]:checked').value === "otomatis";
+    inputJumlahKelas.disabled = modeOtomatis;
+    if (modeOtomatis && sturges) inputJumlahKelas.value = sturges;
     const jumlahKelas = parseInt(inputJumlahKelas.value, 10);
-    const sturges = n > 0 ? Math.round(1 + 3.322 * Math.log10(n)) : null;
-    aturTeks("saranSturges", sturges ? `Saran (aturan Sturges): ${sturges} kelas` : "");
+    aturTeks("saranSturges", sturges ? `Sturges: k = 1 + 3,322 × log10(${n}) ≈ ${sturges} kelas` : "");
 
     const kosongkanRingkasan = () => {
         ["distN", "distMin", "distMaks", "distRentang", "distLebarMentah", "distLebar", "totalFDistribusi", "totalFRelDistribusi"].forEach(
@@ -402,6 +405,7 @@ const JUMLAH_KOLOM_TABEL = {
 
 function kosongkanDataBerkelompok() {
     tabelTerakhir = null;
+    kosongkanGrafik(); // dari tambahan.js
     DAFTAR_ID_BERKELOMPOK.forEach((id) => aturTeks(id, "-"));
     DAFTAR_TABEL_BERKELOMPOK.forEach((id) => {
         ambil(id).innerHTML = `<tr><td colspan="${JUMLAH_KOLOM_TABEL[id]}" class="px-4 py-6 text-center text-slate-500">
@@ -503,6 +507,9 @@ function tampilkanDataBerkelompok(tabel) {
     // 6 – 9
     tampilkanBentukData(tabel, rataRata);
     tampilkanUkuranLetak(tabel);
+
+    // 10 – 11: histogram, poligon, ogive (dari tambahan.js)
+    gambarGrafik(tabel);
 }
 
 // Kemencengan & Keruncingan (Data Berkelompok)
@@ -700,6 +707,7 @@ tombolReset.addEventListener("click", () => {
 });
 
 inputJumlahKelas.addEventListener("input", tampilkanDistribusi);
+document.querySelectorAll('input[name="modeKelas"]').forEach((r) => r.addEventListener("change", tampilkanDistribusi));
 inputPersentilBerkelompok.addEventListener("input", () => {
     if (tabelTerakhir) tampilkanPersentilBerkelompok(tabelTerakhir);
 });
